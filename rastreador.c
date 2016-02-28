@@ -63,7 +63,7 @@ void trace(pid_t hijo, int verbose, int verbose_pause){
 				printV("Se hizo una llamada al sistema %ld \n", orig_rax, verbose);
 				syscall = 0;
 				sum_syscalls[orig_rax]++;
-			}else if(!syscall == 1 && first == 1){
+			}else if(syscall == 0 && first == 1){
 				printV("Saliendo de la llamada %ld \n", orig_rax, verbose);
 				syscall = 1;
 			}else{
@@ -71,7 +71,7 @@ void trace(pid_t hijo, int verbose, int verbose_pause){
 			}
 			ptrace(PTRACE_SYSCALL, hijo, NULL, NULL);
 			if(verbose_pause == 1){
-				printf("Presione Enter para continuar\n");
+				printf("Presione Enter para continuar");
 				getchar();
 			}
 		}
@@ -94,7 +94,7 @@ void result(){
 	int count = 0;
 	while(count<max){
 		if(sum_syscalls[count]>0){
-			printf("|Código: %d\t---\tContador: %d\t--", count, sum_syscalls[count]);
+			printf("---Código: %d\t---\tContador: %d\t--- \n", count, sum_syscalls[count]);
 		}
 		count++;
 	}
