@@ -50,29 +50,28 @@ void trace(pid_t hijo, bool verbose, bool verbose_pause){
 	bool syscall = true;
 	bool first = false;
 	long orig_rax;
-	struct user_regs_struct regs;
-	
+		
 	while(1){
 		wait(NULL);
 		orig_rax = ptrace(PTRACE_PEEKUSER, hijo, SPACE, NULL);
 		
 		if(orig_rax == -1){
-			printV("Saliendo de la ejecución de System Call \n", 01, verbose);
+			printV("Saliendo de la ejecución de System Call\n", 01, verbose);
 			break;
 		}else{
 			if(syscall && first){
-				printV("Se hizo una llamada al sistema %s", orig_rax, verbose);
+				printV("Se hizo una llamada al sistema %ld \n", orig_rax, verbose);
 				syscall = false;
-				syscalls[orig_rax]++;
+				sum_syscalls[orig_rax]++;
 			}else if(!syscall && first){
-				printV("Saliendo de la llamada %s", orig_rax, verbose);
+				printV("Saliendo de la llamada %s \n", orig_rax, verbose);
 				syscall = true;
 			}else{
 				first = true;
 			}
 			ptrace(PTRACE_SYSCALL, hijo, NULL, NULL);
 			if(verbose_pause){
-				printf("Presione Enter para continuar");
+				printf("Presione Enter para continuar\n");
 				getchar();
 			}
 		}
@@ -94,8 +93,8 @@ void result(){
 	
 	int count = 0;
 	while(count<max){
-		if(syscalls[count]>0){
-			printf("|Código: %d\t|\tContador: %d\t|", count, syscalls[count]);
+		if(sum_syscalls[count]>0){
+			printf("|Código: %d\t|\tContador: %d\t|", count, sum_syscalls[count]);
 		}
 		count++;
 	}

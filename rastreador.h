@@ -25,10 +25,10 @@ typedef enum {false, true} bool;
 
 
 #ifdef __i386__
-		int syscalls[338];
+		int sum_syscalls[338];
 		
 #else
-		int syscalls[323];
+		int sum_syscalls[323];
 #endif
 
 
