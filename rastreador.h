@@ -15,7 +15,7 @@
 	#include <sys/reg.h> 
 #endif
 
-typedef enum {false, true} bool;
+
 
 #ifdef __i386__
 	#define SPACE 4 * ORIG_EAX
@@ -32,7 +32,7 @@ typedef enum {false, true} bool;
 #endif
 
 
-void trace(pid_t hijo, bool verbose, bool verbose_pause);
-void printV(char* message, long current_register, bool verbose);
+void trace(pid_t hijo, int verbose, int verbose_pause);
+void printV(char* message, long current_register, int verbose);
 void result(void);
 void copyArgs(int value, int argc, char **argv);

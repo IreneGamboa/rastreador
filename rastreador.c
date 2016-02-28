@@ -1,27 +1,27 @@
 #include "rastreador.h"
 
 int main(int argc, char **argv){
-	bool verbose_pause;
-	bool verbose;
+	int verbose_pause;
+	int verbose;
 	long orig_eax;
 	long eax;
 	pid_t hijo;
 	
 	if(strcmp(argv[1], "-v") == 0){
-		verbose = true;
-		verbose_pause = false;
+		verbose = 1;
+		verbose_pause = 0;
 	}else if(strcmp(argv[1], "-V") == 0){
-		verbose = true;
-		verbose_pause = true;
+		verbose = 1;
+		verbose_pause = 1;
 	}else{
-		verbose = false;
-		verbose_pause = false;
+		verbose = 0;
+		verbose_pause = 0;
 	}
 	
 	hijo = fork();
 	
 	if(hijo == 0){
-		if(strcmp(argv[1], "-v") || strcmp(argv[1], "-V")){
+		if(strcmp(argv[1], "-v") == 0 || strcmp(argv[1], "-V") == 0){
 			copyArgs(2, argc, argv);
 		}else{
 			copyArgs(1, argc, argv);
@@ -45,10 +45,10 @@ void copyArgs(int value, int argc, char **argv){
 	execve(args[0], &args[0], NULL);
 }
 
-void trace(pid_t hijo, bool verbose, bool verbose_pause){
-	bool running = true;
-	bool syscall = true;
-	bool first = false;
+void trace(pid_t hijo, int verbose, int verbose_pause){
+	int running = 1;
+	int syscall = 1;
+	int first = 0;
 	long orig_rax;
 		
 	while(1){
@@ -56,21 +56,21 @@ void trace(pid_t hijo, bool verbose, bool verbose_pause){
 		orig_rax = ptrace(PTRACE_PEEKUSER, hijo, SPACE, NULL);
 		
 		if(orig_rax == -1){
-			printV("Saliendo de la ejecución de System Call\n", 01, verbose);
+			printV("Saliendo de la ejecución de System Call\n", 0, verbose);
 			break;
 		}else{
-			if(syscall && first){
+			if(syscall == 1  && first == 1){
 				printV("Se hizo una llamada al sistema %ld \n", orig_rax, verbose);
-				syscall = false;
+				syscall = 0;
 				sum_syscalls[orig_rax]++;
-			}else if(!syscall && first){
-				printV("Saliendo de la llamada %s \n", orig_rax, verbose);
-				syscall = true;
+			}else if(!syscall == 1 && first == 1){
+				printV("Saliendo de la llamada %ld \n", orig_rax, verbose);
+				syscall = 1;
 			}else{
-				first = true;
+				first = 1;
 			}
 			ptrace(PTRACE_SYSCALL, hijo, NULL, NULL);
-			if(verbose_pause){
+			if(verbose_pause == 1){
 				printf("Presione Enter para continuar\n");
 				getchar();
 			}
@@ -78,8 +78,8 @@ void trace(pid_t hijo, bool verbose, bool verbose_pause){
 	}	
 }
 
-void printV(char* message, long current_register, bool verbose){
-	if(verbose){
+void printV(char* message, long current_register, int verbose){
+	if(verbose == 1){
 		printf(message, current_register);
 	}
 }
@@ -94,7 +94,7 @@ void result(){
 	int count = 0;
 	while(count<max){
 		if(sum_syscalls[count]>0){
-			printf("|Código: %d\t|\tContador: %d\t|", count, sum_syscalls[count]);
+			printf("|Código: %d\t---\tContador: %d\t--", count, sum_syscalls[count]);
 		}
 		count++;
 	}
