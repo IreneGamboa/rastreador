@@ -26,9 +26,15 @@ typedef enum {false, true} bool;
 #define VERBOSE_PAUSE "-V" 
 #define VERBOSE      "-v"
 
-void initialize(void);
-void execute(char *comand, char **argv);
-void trace(pid_t child, bool verbose, bool pause);
-void printV(char *message, long register_f, bool verbose);
-void result(void)
-void result(void)
+#ifdef __i386__
+		int syscalls[338];
+		
+#else
+		int syscalls[323];
+#endif
+
+
+void trace(pid_t hijo, bool verbose, bool verbose_pause);
+void printV(char* message, long current_register, bool verbose);
+void result(void);
+void copyArgs(int value, int argc, char **argv);
