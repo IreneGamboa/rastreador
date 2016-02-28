@@ -7,12 +7,11 @@ int main(int argc, char **argv){
 	long eax;
 	pid_t hijo;
 	
-	printf(argv[1]);
-	if(strcmp(argv[1], VERBOSE)){
+	if(strcmp(argv[1], "-v") == 0){
 		verbose = true;
 		verbose_pause = false;
-	}else if(strcmp(argv[1], VERBOSE_PAUSE)){
-		verbose = false;
+	}else if(strcmp(argv[1], "-V") == 0){
+		verbose = true;
 		verbose_pause = true;
 	}else{
 		verbose = false;
@@ -22,7 +21,7 @@ int main(int argc, char **argv){
 	hijo = fork();
 	
 	if(hijo == 0){
-		if(strcmp(argv[1], VERBOSE) || strcmp(argv[1], VERBOSE_PAUSE)){
+		if(strcmp(argv[1], "-v") || strcmp(argv[1], "-V")){
 			copyArgs(2, argc, argv);
 		}else{
 			copyArgs(1, argc, argv);
@@ -58,7 +57,7 @@ void trace(pid_t hijo, bool verbose, bool verbose_pause){
 		orig_rax = ptrace(PTRACE_PEEKUSER, hijo, SPACE, NULL);
 		
 		if(orig_rax == -1){
-			printV("Saliendo de la ejecución de System Call \n",01,verbose);
+			printV("Saliendo de la ejecución de System Call \n", 01, verbose);
 			break;
 		}else{
 			if(syscall && first){
@@ -82,7 +81,7 @@ void trace(pid_t hijo, bool verbose, bool verbose_pause){
 
 void printV(char* message, long current_register, bool verbose){
 	if(verbose){
-		printf(message);
+		printf(message, current_register);
 	}
 }
 

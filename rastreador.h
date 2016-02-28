@@ -23,8 +23,6 @@ typedef enum {false, true} bool;
 	#define SPACE 8 * ORIG_RAX 
 #endif
 
-#define VERBOSE_PAUSE "-V" 
-#define VERBOSE      "-v"
 
 #ifdef __i386__
 		int syscalls[338];
